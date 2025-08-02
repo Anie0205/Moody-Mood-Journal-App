@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, { expressIn: "7d"});
+    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d"});
 };
 
 exports.registerUser = async (req, res) => {
@@ -16,7 +16,7 @@ exports.registerUser = async (req, res) => {
         const user = await User.create({email, password: hashed});
 
         res.status(201).json({
-            _id: user_id,
+            _id: user._id,
             email: user.email,
             token: generateToken(user._id), 
         });

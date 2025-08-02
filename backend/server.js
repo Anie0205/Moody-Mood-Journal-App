@@ -11,7 +11,7 @@
     app.use(cors());
     app.use(express.json());
 
-    connectDG();
+    connectDB();
 
     app.use("/api", authRoutes);
     app.use("/api/moods", moodRoutes);
