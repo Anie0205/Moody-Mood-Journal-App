@@ -55,11 +55,10 @@ const Home = () => {
             >
               <div className="space-y-4">
                 <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                  Your Personality is{' '}
+                  Let your emotions be seen,{' '}
                   <span className="bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
-                    What Makes You
-                  </span>{' '}
-                  Character
+                    one tap at a time
+                  </span>
                 </h1>
                 <p className="text-lg text-gray-600 max-w-lg">
                   Track your emotional journey with Moody. Build self-awareness, understand your patterns, 
