@@ -32,6 +32,10 @@
     });
 
     connectDB();
+    
+    // Run migration for existing users
+    const migrateUsers = require("./config/migration");
+    migrateUsers();
 
     // Health check endpoint
     app.get('/health', (req, res) => {
