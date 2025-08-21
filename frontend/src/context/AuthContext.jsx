@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { apiGet, apiPost } from '@/lib/api'
 
 const AuthContext = createContext()
 
@@ -15,18 +16,15 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check if user is logged in on app start
     const token = localStorage.getItem('token')
-    if (token) {
-      // Verify token with backend
-      fetch('https://moody-mood-journal-app.onrender.com/api/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data._id) {
+    if (!token) {
+      setLoading(false)
+      return
+    }
+    apiGet('/api/me')
+      .then((data) => {
+        // Backend returns the user object directly
+        if (data && data._id) {
           setUser(data)
         } else {
           localStorage.removeItem('token')
@@ -35,59 +33,35 @@ export const AuthProvider = ({ children }) => {
       .catch(() => {
         localStorage.removeItem('token')
       })
-      .finally(() => {
-        setLoading(false)
-      })
-    } else {
-      setLoading(false)
-    }
+      .finally(() => setLoading(false))
   }, [])
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('https://moody-mood-journal-app.onrender.com/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      })
-
-      const data = await response.json()
-
-      if (data._id) {
+      const data = await apiPost('/api/login', { email, password })
+      // data: { _id, name, email, token }
+      if (data && data.token) {
         localStorage.setItem('token', data.token)
-        setUser(data)
+        setUser({ _id: data._id, name: data.name, email: data.email })
         return { success: true }
-      } else {
-        return { success: false, message: data.message }
       }
+      return { success: false, message: 'Invalid response from server' }
     } catch (error) {
-      return { success: false, message: 'Network error. Please try again.' }
+      return { success: false, message: error.message || 'Network error. Please try again.' }
     }
   }
 
   const register = async (name, email, password) => {
     try {
-      const response = await fetch('https://moody-mood-journal-app.onrender.com/api/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name, email, password })
-      })
-
-      const data = await response.json()
-
-      if (data._id) {
+      const data = await apiPost('/api/signup', { name, email, password })
+      if (data && data.token) {
         localStorage.setItem('token', data.token)
-        setUser(data)
+        setUser({ _id: data._id, name: data.name, email: data.email })
         return { success: true }
-      } else {
-        return { success: false, message: data.message }
       }
+      return { success: false, message: 'Invalid response from server' }
     } catch (error) {
-      return { success: false, message: 'Network error. Please try again.' }
+      return { success: false, message: error.message || 'Network error. Please try again.' }
     }
   }
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { apiGet, apiPost, apiDelete } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
@@ -33,13 +34,8 @@ const Dashboard = () => {
 
   const fetchMoods = async () => {
     try {
-      const token = localStorage.getItem('token')
-      const response = await fetch('https://moody-mood-journal-app.onrender.com/api/moods', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      const data = await response.json()
+      const data = await apiGet('/api/moods')
+      // Backend returns an array of mood entries directly
       if (Array.isArray(data)) {
         setMoods(data)
       }
@@ -59,31 +55,13 @@ const Dashboard = () => {
     setSuccess('')
 
     try {
-      const token = localStorage.getItem('token')
-      const response = await fetch('https://moody-mood-journal-app.onrender.com/api/moods', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          mood: selectedMood,
-          note: moodNote
-        })
-      })
-
-      const data = await response.json()
-
-      if (data._id) {
-        setSuccess('Mood logged successfully!')
-        setSelectedMood('')
-        setMoodNote('')
-        fetchMoods()
-      } else {
-        setError(data.message)
-      }
+      await apiPost('/api/moods', { mood: selectedMood, note: moodNote })
+      setSuccess('Mood logged successfully!')
+      setSelectedMood('')
+      setMoodNote('')
+      fetchMoods()
     } catch (error) {
-      setError('Failed to log mood. Please try again.')
+      setError(error.message || 'Failed to log mood. Please try again.')
     }
 
     setLoading(false)
@@ -91,19 +69,8 @@ const Dashboard = () => {
 
   const handleDeleteMood = async (moodId) => {
     try {
-      const token = localStorage.getItem('token')
-      const response = await fetch(`https://moody-mood-journal-app.onrender.com/api/moods/${moodId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        fetchMoods()
-      }
+      await apiDelete(`/api/moods/${moodId}`)
+      fetchMoods()
     } catch (error) {
       console.error('Error deleting mood:', error)
     }

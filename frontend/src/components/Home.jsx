@@ -53,18 +53,19 @@ const Home = () => {
               transition={{ duration: 0.8 }}
               className="space-y-8"
             >
-              <div className="space-y-2 lg:space-y-3">
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-snug tracking-tight">
-                  Let your emotions be seen,{' '}
+              <div className="space-y-4">
+                <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                  Your Personality is{' '}
                   <span className="bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
-                    one tap at a time
-                  </span>
+                    What Makes You
+                  </span>{' '}
+                  Character
                 </h1>
-                <p className="text-base sm:text-lg text-gray-600 max-w-md leading-relaxed">
-                  Moody helps you track how you feel — effortlessly. One tap to reflect, one habit to know yourself better.
+                <p className="text-lg text-gray-600 max-w-lg">
+                  Track your emotional journey with Moody. Build self-awareness, understand your patterns, 
+                  and develop emotional intelligence through beautiful, intuitive mood tracking.
                 </p>
               </div>
-
               
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link to="/register">
