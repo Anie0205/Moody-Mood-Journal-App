@@ -1,4 +1,4 @@
-const API_BASE = import.meta?.env?.VITE_API_BASE || '';
+const API_BASE = import.meta?.env?.VITE_API_BASE || 'https://moody-mood-journal-app-version-2.onrender.com';
 export const getAuthToken = () => {
   try {
     return localStorage.getItem('token') || '';
