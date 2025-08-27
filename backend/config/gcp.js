@@ -2,9 +2,22 @@ const {LanguageServiceClient} = require('@google-cloud/language');
 const {Firestore} = require('@google-cloud/firestore');
 const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
 const {GoogleGenerativeAI} = require('@google/generative-ai');
+const fs = require('fs');
+const path = require('path');
 
 // Prefer Application Default Credentials. For local dev, set GOOGLE_APPLICATION_CREDENTIALS
-// Optionally pull secrets from Secret Manager if ENV not set
+// On platforms like Render, allow providing the service account JSON via env var
+// GOOGLE_APPLICATION_CREDENTIALS_JSON and write it to a temp file automatically.
+
+try {
+    if (!process.env.GOOGLE_APPLICATION_CREDENTIALS && process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
+        const targetPath = path.join('/tmp', 'gcp-sa.json');
+        fs.writeFileSync(targetPath, process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON, { encoding: 'utf8' });
+        process.env.GOOGLE_APPLICATION_CREDENTIALS = targetPath;
+    }
+} catch (err) {
+    console.warn('Failed to materialize GOOGLE_APPLICATION_CREDENTIALS_JSON:', err.message);
+}
 
 const secretClient = new SecretManagerServiceClient();
 
