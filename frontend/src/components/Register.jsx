@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Heart, Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
+import { Flower2, Mail, Lock, User, Eye, EyeOff, Heart } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 const Register = () => {
@@ -59,12 +59,12 @@ const Register = () => {
           className="text-center"
         >
           <div className="flex justify-center mb-4">
-            <div className="bg-gradient-to-r from-pink-400 to-rose-400 p-3 rounded-full">
+            <div className="lotus-gradient p-3 rounded-full">
               <Heart className="h-8 w-8 text-white" />
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">Join Moody</h2>
-          <p className="mt-2 text-gray-600">Start your emotional wellness journey today</p>
+          <h2 className="text-3xl font-bold lotus-gradient-text">Join Moody</h2>
+          <p className="mt-2 text-[#5B3B89]">Start your emotional wellness journey today</p>
         </motion.div>
 
         <motion.div
@@ -72,12 +72,12 @@ const Register = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <Card className="border-pink-100 shadow-lg">
+          <Card className="card-lotus">
             <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl text-center bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
+              <CardTitle className="text-2xl text-center lotus-gradient-text">
                 Create Account
               </CardTitle>
-              <CardDescription className="text-center">
+              <CardDescription className="text-center text-[#5B3B89]">
                 Fill in your details to get started
               </CardDescription>
             </CardHeader>
@@ -92,7 +92,7 @@ const Register = () => {
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-gray-700">Full Name</Label>
+                  <Label htmlFor="name" className="text-[#1E1E2F]">Full Name</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
@@ -101,14 +101,14 @@ const Register = () => {
                       placeholder="Enter your full name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="pl-10 border-pink-200 focus:border-pink-400 focus:ring-pink-400"
+                      className="pl-10 border-[#3A8D8E]/20 focus:border-[#3A8D8E] focus:ring-[#3A8D8E]"
                       required
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-700">Email</Label>
+                  <Label htmlFor="email" className="text-[#1E1E2F]">Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
@@ -117,14 +117,14 @@ const Register = () => {
                       placeholder="Enter your email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10 border-pink-200 focus:border-pink-400 focus:ring-pink-400"
+                      className="pl-10 border-[#3A8D8E]/20 focus:border-[#3A8D8E] focus:ring-[#3A8D8E]"
                       required
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-700">Password</Label>
+                  <Label htmlFor="password" className="text-[#1E1E2F]">Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
@@ -133,7 +133,7 @@ const Register = () => {
                       placeholder="Create a password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10 pr-10 border-pink-200 focus:border-pink-400 focus:ring-pink-400"
+                      className="pl-10 pr-10 border-[#3A8D8E]/20 focus:border-[#3A8D8E] focus:ring-[#3A8D8E]"
                       required
                     />
                     <button
@@ -147,7 +147,7 @@ const Register = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-gray-700">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword" className="text-[#1E1E2F]">Confirm Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
@@ -156,7 +156,7 @@ const Register = () => {
                       placeholder="Confirm your password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="pl-10 pr-10 border-pink-200 focus:border-pink-400 focus:ring-pink-400"
+                      className="pl-10 pr-10 border-[#3A8D8E]/20 focus:border-[#3A8D8E] focus:ring-[#3A8D8E]"
                       required
                     />
                     <button
@@ -172,7 +172,7 @@ const Register = () => {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white py-2"
+                  className="w-full button-lotus text-white py-2"
                 >
                   {loading ? (
                     <div className="flex items-center space-x-2">
@@ -185,11 +185,11 @@ const Register = () => {
                 </Button>
 
                 <div className="text-center">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-[#5B3B89]">
                     Already have an account?{' '}
                     <Link 
                       to="/login" 
-                      className="font-medium text-pink-600 hover:text-pink-500 transition-colors"
+                      className="font-medium text-[#3A8D8E] hover:text-[#5B3B89] transition-colors"
                     >
                       Sign in here
                     </Link>
@@ -206,7 +206,7 @@ const Register = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="text-center"
         >
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-[#5B3B89]">
             By creating an account, you agree to our Terms of Service and Privacy Policy
           </p>
         </motion.div>

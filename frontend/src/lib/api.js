@@ -52,4 +52,17 @@ export const apiDelete = (path, options = {}) => {
   }).then(handleResponse);
 };
 
+// New high-level API helpers
+export const sendAnonymousMessage = (message) =>
+  apiPost('/api/chat/anonymous', { message });
+
+export const createVentEntry = ({ text }) =>
+  apiPost('/api/vent', { text });
+
+export const listVentEntries = () =>
+  apiGet('/api/vent');
+
+export const translateForIndianParent = (text) =>
+  apiPost('/api/translate/indian-parent', { text });
+
 

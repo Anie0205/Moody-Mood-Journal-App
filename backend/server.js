@@ -3,9 +3,19 @@
     const cors = require("cors");
     const connectDB = require("./config/db");
     require("dotenv").config();
+    
+    // Debug: Check if .env is loaded
+    console.log('Environment check:');
+    console.log('MONGO_URI:', process.env.MONGO_URI ? 'SET' : 'NOT SET');
+    console.log('GOOGLE_GEMINI_API_KEY:', process.env.GOOGLE_GEMINI_API_KEY ? 'SET' : 'NOT SET');
+    console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'SET' : 'NOT SET');
+    console.log('PORT:', process.env.PORT || 'DEFAULT 5000');
 
     const authRoutes = require("./routes/auth");
     const moodRoutes = require("./routes/mood");
+    const chatRoutes = require("./routes/chat");
+    const ventRoutes = require("./routes/vent");
+    const translatorRoutes = require("./routes/translator");
 
     const app = express();
     
@@ -48,6 +58,9 @@
     
     app.use("/api", authRoutes);
     app.use("/api/moods", moodRoutes);
+    app.use("/api/chat", chatRoutes);
+    app.use("/api/vent", ventRoutes);
+    app.use("/api/translate", translatorRoutes);
 
     // Error handling middleware
     app.use((err, req, res, next) => {

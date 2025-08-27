@@ -8,6 +8,9 @@ import Home from './components/Home'
 import Dashboard from './components/Dashboard'
 import Login from './components/Login'
 import Register from './components/Register'
+import AnonymousChat from './components/AnonymousChat'
+import VentSpace from './components/VentSpace'
+import IndianParentTranslator from './components/IndianParentTranslator'
 
 // Context
 import { AuthProvider, useAuth } from './context/AuthContext'
@@ -24,10 +27,13 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50">
+    <div className="min-h-screen">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/anonymous" element={<AnonymousChat />} />
+        <Route path="/vent" element={<VentSpace />} />
+        <Route path="/translator" element={<IndianParentTranslator />} />
         <Route 
           path="/dashboard" 
           element={user ? <Dashboard /> : <Navigate to="/login" />} 

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Calendar, TrendingUp, Heart, Smile, Frown, Meh, Plus, Trash2, BookOpen } from 'lucide-react'
+import { Calendar, TrendingUp, Flower2, Smile, Frown, Meh, Plus, Trash2, BookOpen, Heart, Angry, AlertCircle, Moon, Leaf, Sun } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 const Dashboard = () => {
@@ -17,15 +17,17 @@ const Dashboard = () => {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
+  // Lotus-inspired palette: magenta, soft purples, creamy whites, golden center, muted teals/greens
   const moodOptions = [
-    { emoji: '😊', label: 'Happy', value: 'happy', color: 'from-yellow-400 to-orange-400' },
-    { emoji: '😢', label: 'Sad', value: 'sad', color: 'from-blue-400 to-indigo-400' },
-    { emoji: '😠', label: 'Angry', value: 'angry', color: 'from-red-400 to-pink-400' },
-    { emoji: '😰', label: 'Anxious', value: 'anxious', color: 'from-purple-400 to-pink-400' },
-    { emoji: '😴', label: 'Tired', value: 'tired', color: 'from-gray-400 to-slate-400' },
-    { emoji: '😌', label: 'Calm', value: 'calm', color: 'from-green-400 to-emerald-400' },
-    { emoji: '🤗', label: 'Excited', value: 'excited', color: 'from-pink-400 to-rose-400' },
-    { emoji: '😐', label: 'Neutral', value: 'neutral', color: 'from-gray-300 to-gray-400' }
+    // Palette: Teal #3A8D8E, Deep Purple #5B3B89, Golden #E4A548, Beige #F2E7DA/#ECE7E1
+    { icon: Smile, label: 'Happy', value: 'happy', color: 'from-[#E4A548] to-[#ECE7E1]' },
+    { icon: Frown, label: 'Sad', value: 'sad', color: 'from-[#5B3B89] to-[#3A8D8E]' },
+    { icon: Angry, label: 'Angry', value: 'angry', color: 'from-[#E4A548] to-[#5B3B89]' },
+    { icon: AlertCircle, label: 'Anxious', value: 'anxious', color: 'from-[#3A8D8E] to-[#5B3B89]' },
+    { icon: Moon, label: 'Tired', value: 'tired', color: 'from-[#ECE7E1] to-[#5B3B89]' },
+    { icon: Leaf, label: 'Calm', value: 'calm', color: 'from-[#3A8D8E] to-[#ECE7E1]' },
+    { icon: Sun, label: 'Excited', value: 'excited', color: 'from-[#5B3B89] to-[#E4A548]' },
+    { icon: Meh, label: 'Neutral', value: 'neutral', color: 'from-[#ECE7E1] to-[#3A8D8E]' }
   ]
 
   useEffect(() => {
@@ -103,9 +105,9 @@ const Dashboard = () => {
     })
   }
 
-  const getMoodEmoji = (mood) => {
+  const getMoodIcon = (mood) => {
     const moodOption = moodOptions.find(option => option.value === mood)
-    return moodOption ? moodOption.emoji : '😐'
+    return moodOption ? moodOption.icon : Meh
   }
 
   const getMoodColor = (mood) => {
@@ -123,10 +125,10 @@ const Dashboard = () => {
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold lotus-gradient-text mb-2">
             Welcome back, {user?.name}! 👋
           </h1>
-          <p className="text-gray-600">How are you feeling today?</p>
+          <p className="text-[#5B3B89]">How are you feeling today?</p>
         </motion.div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -137,13 +139,13 @@ const Dashboard = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="lg:col-span-2"
           >
-            <Card className="border-pink-100 shadow-lg">
+            <Card className="card-lotus">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <Heart className="h-5 w-5 text-pink-500" />
-                  <span>Log Your Mood</span>
+                  <Heart className="h-5 w-5 text-[#3A8D8E]" />
+                  <span className="lotus-gradient-text">Log Your Mood</span>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-[#5B3B89]">
                   Select how you're feeling right now and add an optional note
                 </CardDescription>
               </CardHeader>
@@ -166,7 +168,7 @@ const Dashboard = () => {
 
                 {/* Mood Selection */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">How are you feeling?</h3>
+                  <h3 className="text-lg font-semibold text-[#1E1E2F] mb-4">How are you feeling?</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {moodOptions.map((mood) => (
                       <motion.button
@@ -174,16 +176,20 @@ const Dashboard = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setSelectedMood(mood.value)}
-                        className={`p-4 rounded-xl border-2 transition-all duration-200 ${
+                        className={`relative p-4 rounded-2xl text-white shadow-md transition-all duration-200 bg-gradient-to-br ${mood.color} ${
                           selectedMood === mood.value
-                            ? `border-pink-400 bg-gradient-to-r ${mood.color} text-white shadow-lg`
-                            : 'border-gray-200 bg-white hover:border-pink-200 hover:shadow-md'
+                            ? 'ring-2 ring-white/80 shadow-lg scale-[1.02]'
+                            : 'opacity-95 hover:opacity-100 hover:shadow-lg'
                         }`}
                       >
-                        <div className="text-2xl mb-2">{mood.emoji}</div>
-                        <div className={`text-sm font-medium ${
-                          selectedMood === mood.value ? 'text-white' : 'text-gray-700'
-                        }`}>
+                        {/* Decorative sparkles */}
+                        <span className="absolute right-3 top-3 w-1.5 h-1.5 bg-white/70 rounded-full"></span>
+                        <span className="absolute right-6 top-6 w-1 h-1 bg-white/60 rounded-full"></span>
+
+                        <div className="mb-2">
+                          <mood.icon className="h-6 w-6 text-white drop-shadow-sm" />
+                        </div>
+                        <div className="text-sm font-medium text-white">
                           {mood.label}
                         </div>
                       </motion.button>
@@ -193,12 +199,12 @@ const Dashboard = () => {
 
                 {/* Optional Note */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Add a note (optional)</h3>
+                  <h3 className="text-lg font-semibold text-[#1E1E2F] mb-2">Add a note (optional)</h3>
                   <Textarea
                     placeholder="What's on your mind? Share your thoughts, what triggered this mood, or anything you'd like to remember..."
                     value={moodNote}
                     onChange={(e) => setMoodNote(e.target.value)}
-                    className="border-pink-200 focus:border-pink-400 focus:ring-pink-400"
+                    className="border-[#3A8D8E]/20 focus:border-[#3A8D8E] focus:ring-[#3A8D8E]"
                     rows={3}
                   />
                 </div>
@@ -206,7 +212,7 @@ const Dashboard = () => {
                 <Button
                   onClick={handleMoodSubmit}
                   disabled={loading || !selectedMood}
-                  className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white py-3"
+                  className="w-full button-lotus text-white py-3"
                 >
                   {loading ? (
                     <div className="flex items-center space-x-2">
@@ -232,24 +238,24 @@ const Dashboard = () => {
             className="space-y-6"
           >
             {/* Quick Stats */}
-            <Card className="border-pink-100 shadow-lg">
+            <Card className="card-lotus">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <TrendingUp className="h-5 w-5 text-pink-500" />
-                  <span>Your Stats</span>
+                  <TrendingUp className="h-5 w-5 text-[#3A8D8E]" />
+                  <span className="lotus-gradient-text">Your Stats</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-gray-900">{totalMoods}</div>
-                  <div className="text-sm text-gray-600">Total Mood Entries</div>
+                  <div className="text-3xl font-bold text-[#1E1E2F]">{totalMoods}</div>
+                  <div className="text-sm text-[#5B3B89]">Total Mood Entries</div>
                 </div>
                 
                 {totalMoods > 0 && (
                   <div className="text-center">
-                    <div className="text-2xl mb-1">{getMoodEmoji(mostCommonMood)}</div>
-                    <div className="text-sm text-gray-600">Most Common Mood</div>
-                    <div className="text-sm font-medium text-gray-900 capitalize">{mostCommonMood}</div>
+                    {(() => { const Icon = getMoodIcon(mostCommonMood); return <Icon className="h-6 w-6 text-[#3A8D8E] inline-block mb-1" /> })()}
+                    <div className="text-sm text-[#5B3B89]">Most Common Mood</div>
+                    <div className="text-sm font-medium text-[#1E1E2F] capitalize">{mostCommonMood}</div>
                   </div>
                 )}
 
@@ -257,7 +263,7 @@ const Dashboard = () => {
                   {Object.entries(moodCounts).slice(0, 3).map(([mood, count]) => (
                     <div key={mood} className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
-                        <span>{getMoodEmoji(mood)}</span>
+                        {(() => { const Icon = getMoodIcon(mood); return <Icon className="h-4 w-4 text-[#3A8D8E]" /> })()}
                         <span className="text-sm capitalize">{mood}</span>
                       </div>
                       <span className="text-sm font-medium">{count}</span>
@@ -268,18 +274,18 @@ const Dashboard = () => {
             </Card>
 
             {/* Weekly Insights */}
-            <Card className="border-pink-100 shadow-lg">
+            <Card className="card-lotus">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <BookOpen className="h-5 w-5 text-pink-500" />
-                  <span>Weekly Insights</span>
+                  <BookOpen className="h-5 w-5 text-[#3A8D8E]" />
+                  <span className="lotus-gradient-text">Weekly Insights</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="bg-gradient-to-r from-pink-50 to-rose-50 p-3 rounded-lg">
-                    <div className="text-sm font-medium text-gray-900">This Week</div>
-                    <div className="text-xs text-gray-600">
+                  <div className="lotus-gradient-soft p-3 rounded-lg border border-[#3A8D8E]/20">
+                    <div className="text-sm font-medium text-[#1E1E2F]">This Week</div>
+                    <div className="text-xs text-[#5B3B89]">
                       You've logged {moods.filter(mood => {
                         const moodDate = new Date(mood.createdAt)
                         const weekAgo = new Date()
@@ -290,7 +296,7 @@ const Dashboard = () => {
                   </div>
                   
                   {totalMoods > 0 && (
-                    <div className="text-xs text-gray-600">
+                    <div className="text-xs text-[#5B3B89]">
                       💡 Keep tracking daily to discover your emotional patterns and triggers!
                     </div>
                   )}
@@ -307,13 +313,13 @@ const Dashboard = () => {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="mt-8"
         >
-          <Card className="border-pink-100 shadow-lg">
+          <Card className="card-lotus">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <Calendar className="h-5 w-5 text-pink-500" />
-                <span>Recent Mood Entries</span>
+                <Calendar className="h-5 w-5 text-[#3A8D8E]" />
+                <span className="lotus-gradient-text">Recent Mood Entries</span>
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-[#5B3B89]">
                 Your mood history and notes
               </CardDescription>
             </CardHeader>
@@ -321,8 +327,8 @@ const Dashboard = () => {
               {moods.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="text-4xl mb-4">📝</div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No mood entries yet</h3>
-                  <p className="text-gray-600">Start by logging your first mood above!</p>
+                  <h3 className="text-lg font-semibold text-[#1E1E2F] mb-2">No mood entries yet</h3>
+                  <p className="text-[#5B3B89]">Start by logging your first mood above!</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -331,17 +337,17 @@ const Dashboard = () => {
                       key={mood._id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="flex items-start space-x-4 p-4 bg-gradient-to-r from-pink-50 to-rose-50 rounded-lg"
+                      className="flex items-start space-x-4 p-4 lotus-gradient-soft rounded-lg border border-[#3A8D8E]/20"
                     >
                       <div className={`p-2 rounded-full bg-gradient-to-r ${getMoodColor(mood.mood)}`}>
-                        <span className="text-lg">{getMoodEmoji(mood.mood)}</span>
+                        {(() => { const Icon = getMoodIcon(mood.mood); return <Icon className="h-5 w-5 text-white" /> })()}
                       </div>
                       
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-gray-900 capitalize">{mood.mood}</h4>
+                          <h4 className="font-medium text-[#1E1E2F] capitalize">{mood.mood}</h4>
                           <div className="flex items-center space-x-2">
-                            <span className="text-xs text-gray-500">{formatDate(mood.createdAt)}</span>
+                            <span className="text-xs text-[#5B3B89]">{formatDate(mood.createdAt)}</span>
                             <Button
                               variant="ghost"
                               size="sm"
@@ -353,7 +359,7 @@ const Dashboard = () => {
                           </div>
                         </div>
                         {mood.note && (
-                          <p className="text-sm text-gray-600 mt-1">{mood.note}</p>
+                          <p className="text-sm text-[#5B3B89] mt-1">{mood.note}</p>
                         )}
                       </div>
                     </motion.div>

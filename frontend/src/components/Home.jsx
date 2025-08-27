@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { Heart, Sparkles, TrendingUp, Calendar, BookOpen, BarChart3 } from 'lucide-react'
+import { Flower2, Sparkles, TrendingUp, Calendar, BookOpen, BarChart3, MessageCircle, Flower } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 const Home = () => {
   const features = [
     {
-      icon: Heart,
+      icon: Flower2,
       title: "Mood Tracking",
       description: "Track your emotions with simple emoji selections and optional notes for deeper reflection."
     },
@@ -28,21 +28,21 @@ const Home = () => {
   ]
 
   const stats = [
-    { number: "32", label: "Daily Users", color: "from-pink-400 to-rose-400" },
-    { number: "82", label: "Mood Entries", color: "from-purple-400 to-pink-400" },
-    { number: "28", label: "Insights Generated", color: "from-rose-400 to-orange-400" }
+    { number: "32", label: "Daily Users", color: "from-[#3A8D8E] to-[#5B3B89]" },
+    { number: "82", label: "Mood Entries", color: "from-[#5B3B89] to-[#E4A548]" },
+    { number: "28", label: "Insights Generated", color: "from-[#E4A548] to-[#3A8D8E]" }
   ]
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 lg:py-32">
-        <div className="absolute inset-0 bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50"></div>
-        <div className="absolute top-20 left-10 text-pink-300 opacity-30">
+        <div className="absolute inset-0 lotus-gradient-soft"></div>
+        <div className="absolute top-20 left-10 text-[#3A8D8E] opacity-30">
           <Sparkles className="h-8 w-8" />
         </div>
-        <div className="absolute bottom-32 right-20 text-rose-300 opacity-30">
-          <Heart className="h-6 w-6" />
+        <div className="absolute bottom-32 right-20 text-[#5B3B89] opacity-30">
+          <Flower2 className="h-6 w-6" />
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,14 +54,14 @@ const Home = () => {
               className="space-y-8"
             >
               <div className="space-y-4">
-                <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                <h1 className="text-4xl lg:text-6xl font-bold text-[#1E1E2F] leading-tight">
                   Your Personality is{' '}
-                  <span className="bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
+                  <span className="lotus-gradient-text">
                     What Makes You
                   </span>{' '}
                   Character
                 </h1>
-                <p className="text-lg text-gray-600 max-w-lg">
+                <p className="text-lg text-[#5B3B89] max-w-lg">
                   Track your emotional journey with Moody. Build self-awareness, understand your patterns, 
                   and develop emotional intelligence through beautiful, intuitive mood tracking.
                 </p>
@@ -71,7 +71,7 @@ const Home = () => {
                 <Link to="/register">
                   <Button 
                     size="lg"
-                    className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 text-lg"
+                    className="button-lotus text-white px-8 py-3 text-lg"
                   >
                     Start Tracking
                   </Button>
@@ -79,10 +79,10 @@ const Home = () => {
                 <Button 
                   variant="outline" 
                   size="lg"
-                  className="border-pink-200 text-pink-600 hover:bg-pink-50 px-8 py-3 text-lg"
+                  className="border-[#3A8D8E] text-[#3A8D8E] hover:bg-[#3A8D8E]/10 px-8 py-3 text-lg"
                 >
                   <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
+                    <div className="w-3 h-3 bg-[#3A8D8E] rounded-full"></div>
                     <span>Watch Demo</span>
                   </div>
                 </Button>
@@ -95,18 +95,18 @@ const Home = () => {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
-              <div className="relative bg-gradient-to-br from-pink-200 to-rose-300 rounded-full p-8 lg:p-12">
+              <div className="relative lotus-gradient rounded-full p-8 lg:p-12">
                 <div className="bg-white rounded-full p-6 shadow-lg">
                   <div className="text-center space-y-4">
-                    <div className="text-6xl">😊</div>
-                    <h3 className="text-xl font-semibold text-gray-800">Feeling Great Today!</h3>
-                    <p className="text-gray-600">Track your mood in seconds</p>
+                    <MessageCircle className="h-12 w-12 text-[#3A8D8E] mx-auto" />
+                    <h3 className="text-xl font-semibold text-[#1E1E2F]">Feeling Great Today!</h3>
+                    <p className="text-[#5B3B89]">Track your mood in seconds</p>
                   </div>
                 </div>
                 {/* Decorative elements */}
-                <div className="absolute -top-4 -right-4 w-8 h-8 bg-yellow-300 rounded-full opacity-70"></div>
-                <div className="absolute -bottom-6 -left-6 w-6 h-6 bg-purple-300 rounded-full opacity-70"></div>
-                <div className="absolute top-1/2 -right-8 w-4 h-4 bg-pink-400 rounded-full opacity-70"></div>
+                <div className="absolute -top-4 -right-4 w-8 h-8 bg-[#E4A548] rounded-full opacity-70"></div>
+                <div className="absolute -bottom-6 -left-6 w-6 h-6 bg-[#5B3B89] rounded-full opacity-70"></div>
+                <div className="absolute top-1/2 -right-8 w-4 h-4 bg-[#3A8D8E] rounded-full opacity-70"></div>
               </div>
             </motion.div>
           </div>
@@ -123,24 +123,24 @@ const Home = () => {
             className="grid md:grid-cols-2 gap-12 items-center"
           >
             <div className="relative">
-              <div className="bg-gradient-to-br from-pink-200 to-rose-300 rounded-full p-8 lg:p-12">
+              <div className="lotus-gradient rounded-full p-8 lg:p-12">
                 <div className="bg-white rounded-full p-6 shadow-lg">
                   <div className="text-center space-y-4">
-                    <div className="text-5xl">🌸</div>
-                    <h3 className="text-lg font-semibold text-gray-800">Welcome To Moody</h3>
+                    <Flower className="h-10 w-10 text-[#3A8D8E] mx-auto" />
+                    <h3 className="text-lg font-semibold text-[#1E1E2F]">Welcome To Moody</h3>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="space-y-6">
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900">
+              <h2 className="text-3xl lg:text-4xl font-bold text-[#1E1E2F]">
                 Welcome To{' '}
-                <span className="bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
+                <span className="lotus-gradient-text">
                   Moody
                 </span>
               </h2>
-              <p className="text-gray-600 text-lg">
+              <p className="text-[#5B3B89] text-lg">
                 Join thousands of users who are building emotional awareness and improving their mental fitness 
                 through consistent mood tracking and self-reflection.
               </p>
@@ -157,7 +157,7 @@ const Home = () => {
                     <div className={`bg-gradient-to-r ${stat.color} text-white rounded-2xl p-4 mb-2`}>
                       <div className="text-2xl font-bold">{stat.number}</div>
                     </div>
-                    <div className="text-sm text-gray-600">{stat.label}</div>
+                    <div className="text-sm text-[#5B3B89]">{stat.label}</div>
                   </motion.div>
                 ))}
               </div>
@@ -167,7 +167,7 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gradient-to-br from-pink-50 via-rose-50 to-orange-50">
+      <section className="py-20 lotus-gradient-soft">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 50 }}
@@ -175,13 +175,13 @@ const Home = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-[#1E1E2F] mb-4">
               We Can Help{' '}
-              <span className="bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
+              <span className="lotus-gradient-text">
                 Transform You
               </span>
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-[#5B3B89] max-w-2xl mx-auto">
               Discover powerful features designed to help you understand your emotions, 
               track patterns, and build lasting emotional wellness habits.
             </p>
@@ -195,25 +195,25 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className={`bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 ${
-                  index === 1 ? 'bg-gradient-to-br from-pink-500 to-rose-500 text-white' : ''
+                  index === 1 ? 'lotus-gradient text-white' : ''
                 }`}
               >
                 <div className={`p-3 rounded-full w-fit mb-4 ${
                   index === 1 
                     ? 'bg-white/20' 
-                    : 'bg-gradient-to-r from-pink-100 to-rose-100'
+                    : 'lotus-gradient-soft'
                 }`}>
                   <feature.icon className={`h-6 w-6 ${
-                    index === 1 ? 'text-white' : 'text-pink-600'
+                    index === 1 ? 'text-white' : 'text-[#3A8D8E]'
                   }`} />
                 </div>
                 <h3 className={`text-lg font-semibold mb-2 ${
-                  index === 1 ? 'text-white' : 'text-gray-900'
+                  index === 1 ? 'text-white' : 'text-[#1E1E2F]'
                 }`}>
                   {feature.title}
                 </h3>
                 <p className={`text-sm ${
-                  index === 1 ? 'text-white/90' : 'text-gray-600'
+                  index === 1 ? 'text-white/90' : 'text-[#5B3B89]'
                 }`}>
                   {feature.description}
                 </p>
@@ -221,13 +221,101 @@ const Home = () => {
                   <Button 
                     variant="secondary" 
                     size="sm" 
-                    className="mt-4 bg-white text-pink-600 hover:bg-gray-50"
+                    className="mt-4 bg-white text-[#3A8D8E] hover:bg-gray-50"
                   >
                     Learn More →
                   </Button>
                 )}
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* AI Tools Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl lg:text-4xl font-bold text-[#1E1E2F] mb-4">
+              Your AI-Powered Support
+            </h2>
+            <p className="text-lg text-[#5B3B89] max-w-2xl mx-auto">
+              Vent freely, translate tough conversations with respect, and learn how reflective journaling helps.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Anonymous Vent Space */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="rounded-2xl p-6 bg-gradient-to-br from-[#FDF2F8] via-white to-[#F3E8FF] border border-[#3A8D8E]/10 shadow-lg hover:shadow-xl"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-3 rounded-xl lotus-gradient-soft">
+                  <Sparkles className="h-6 w-6 text-[#3A8D8E]" />
+                </div>
+                <h3 className="text-xl font-semibold text-[#1E1E2F]">Anonymous Vent Space</h3>
+              </div>
+              <p className="text-sm text-[#5B3B89] mb-4">
+                No signup. Just type and let the AI listen with empathy—judgment free and moderated for safety.
+              </p>
+              <Link to="/anonymous">
+                <Button className="button-lotus text-white">Start Venting</Button>
+              </Link>
+            </motion.div>
+
+            {/* Indian Parent Translator */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.05 }}
+              className="rounded-2xl p-6 bg-gradient-to-br from-[#ECFEFF] via-white to-[#EEF2FF] border border-[#3A8D8E]/10 shadow-lg hover:shadow-xl"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-3 rounded-xl lotus-gradient-soft">
+                  <BookOpen className="h-6 w-6 text-[#3A8D8E]" />
+                </div>
+                <h3 className="text-xl font-semibold text-[#1E1E2F]">Indian Parent Translator</h3>
+              </div>
+              <p className="text-sm text-[#5B3B89] mb-4">
+                Say it with respect. AI reframes your message into culturally sensitive, palatable Hinglish.
+              </p>
+              <Link to="/translator">
+                <Button variant="outline" className="border-[#3A8D8E] text-[#3A8D8E] hover:bg-[#3A8D8E]/10">
+                  Try the Translator
+                </Button>
+              </Link>
+            </motion.div>
+
+            {/* Psychological Guidance */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="rounded-2xl p-6 bg-gradient-to-br from-[#FFF7ED] via-white to-[#FEF2F2] border border-[#3A8D8E]/10 shadow-lg hover:shadow-xl"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-3 rounded-xl lotus-gradient-soft">
+                  <TrendingUp className="h-6 w-6 text-[#3A8D8E]" />
+                </div>
+                <h3 className="text-xl font-semibold text-[#1E1E2F]">Psychological Guidance</h3>
+              </div>
+              <div className="space-y-2 text-sm text-[#5B3B89] mb-4">
+                <p>• Why AI journaling helps with self-reflection.</p>
+                <p>• Not a replacement for therapy—know when to seek help.</p>
+                <p>• Balanced, stigma-free mental fitness support.</p>
+              </div>
+              <Link to="/anonymous">
+                <Button className="button-lotus text-white">Learn More</Button>
+              </Link>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -242,36 +330,36 @@ const Home = () => {
             className="grid lg:grid-cols-2 gap-12 items-center"
           >
             <div className="space-y-6">
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900">
+              <h2 className="text-3xl lg:text-4xl font-bold text-[#1E1E2F]">
                 Proving Our{' '}
-                <span className="bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
+                <span className="lotus-gradient-text">
                   Expertise
                 </span>
               </h2>
-              <p className="text-lg text-gray-600">
+              <p className="text-lg text-[#5B3B89]">
                 Built with modern web technologies and designed with mental health professionals, 
                 Moody provides a scientifically-backed approach to emotional wellness tracking.
               </p>
               
               <div className="space-y-4">
-                <div className="bg-gradient-to-r from-pink-100 to-rose-100 rounded-lg p-4">
-                  <div className="h-3 bg-gradient-to-r from-pink-400 to-rose-400 rounded-full mb-2"></div>
-                  <div className="text-sm text-gray-600">User Engagement: 95%</div>
+                <div className="lotus-gradient-soft rounded-lg p-4 border border-[#3A8D8E]/20">
+                  <div className="h-3 lotus-gradient rounded-full mb-2"></div>
+                  <div className="text-sm text-[#5B3B89]">User Engagement: 95%</div>
                 </div>
-                <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg p-4">
-                  <div className="h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mb-2 w-4/5"></div>
-                  <div className="text-sm text-gray-600">Mood Improvement: 87%</div>
+                <div className="lotus-gradient-soft rounded-lg p-4 border border-[#3A8D8E]/20">
+                  <div className="h-3 lotus-gradient rounded-full mb-2 w-4/5"></div>
+                  <div className="text-sm text-[#5B3B89]">Mood Improvement: 87%</div>
                 </div>
-                <div className="bg-gradient-to-r from-rose-100 to-orange-100 rounded-lg p-4">
-                  <div className="h-3 bg-gradient-to-r from-rose-400 to-orange-400 rounded-full mb-2 w-3/4"></div>
-                  <div className="text-sm text-gray-600">Daily Usage: 78%</div>
+                <div className="lotus-gradient-soft rounded-lg p-4 border border-[#3A8D8E]/20">
+                  <div className="h-3 lotus-gradient rounded-full mb-2 w-3/4"></div>
+                  <div className="text-sm text-[#5B3B89]">Daily Usage: 78%</div>
                 </div>
               </div>
 
               <Link to="/register">
                 <Button 
                   size="lg"
-                  className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3"
+                  className="button-lotus text-white px-8 py-3"
                 >
                   Start Your Journey
                 </Button>
@@ -279,18 +367,18 @@ const Home = () => {
             </div>
 
             <div className="relative">
-              <div className="bg-gradient-to-br from-pink-200 to-rose-300 rounded-full p-8 lg:p-12">
+              <div className="lotus-gradient rounded-full p-8 lg:p-12">
                 <div className="bg-white rounded-full p-6 shadow-lg">
                   <div className="text-center space-y-4">
-                    <div className="text-5xl">📊</div>
-                    <h3 className="text-lg font-semibold text-gray-800">Track Your Progress</h3>
-                    <p className="text-gray-600 text-sm">Visualize your emotional journey</p>
+                    <BarChart3 className="h-10 w-10 text-[#3A8D8E] mx-auto" />
+                    <h3 className="text-lg font-semibold text-[#1E1E2F]">Track Your Progress</h3>
+                    <p className="text-[#5B3B89] text-sm">Visualize your emotional journey</p>
                   </div>
                 </div>
                 {/* Decorative elements */}
-                <div className="absolute -top-4 -left-4 w-8 h-8 bg-yellow-300 rounded-full opacity-70"></div>
-                <div className="absolute -bottom-6 -right-6 w-6 h-6 bg-purple-300 rounded-full opacity-70"></div>
-                <div className="absolute top-1/4 -left-8 w-4 h-4 bg-pink-400 rounded-full opacity-70"></div>
+                <div className="absolute -top-4 -left-4 w-8 h-8 bg-[#E4A548] rounded-full opacity-70"></div>
+                <div className="absolute -bottom-6 -right-6 w-6 h-6 bg-[#5B3B89] rounded-full opacity-70"></div>
+                <div className="absolute top-1/4 -left-8 w-4 h-4 bg-[#3A8D8E] rounded-full opacity-70"></div>
               </div>
             </div>
           </motion.div>
