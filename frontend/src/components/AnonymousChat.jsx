@@ -22,10 +22,13 @@ export default function AnonymousChat() {
     try {
       // Send conversation history for context-aware responses
       const conversationHistory = [...messages, { role: 'user', text }]
+      console.log('Sending message:', { text, conversationHistory })
       const res = await sendAnonymousMessage(text, conversationHistory)
+      console.log('Response received:', res)
       const reply = res.reply || ''
       setMessages(prev => [...prev, { role: 'ai', text: reply }])
     } catch (e) {
+      console.error('Error details:', e)
       setError(e.message || 'Failed to send')
     } finally {
       setLoading(false)
