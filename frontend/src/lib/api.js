@@ -53,8 +53,8 @@ export const apiDelete = (path, options = {}) => {
 };
 
 // New high-level API helpers
-export const sendAnonymousMessage = (message) =>
-  apiPost('/api/chat/anonymous', { message });
+export const sendAnonymousMessage = (message, conversationHistory = []) =>
+  apiPost('/api/chat/anonymous', { message, conversationHistory });
 
 export const createVentEntry = ({ text }) =>
   apiPost('/api/vent', { text });
