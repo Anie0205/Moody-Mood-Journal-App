@@ -152,7 +152,9 @@ function getCulturalContext(emotion, intent) {
     return contextMap[emotion]?.[intent] || 'General communication challenge';
 }
 
-function buildContextualPrompt(userText, emotion, intent, culturalContext) {
+function buildContextualPrompt(userText, emotion, intent, culturalContext, userLanguage = 'en') {
+    const isHindi = userLanguage === 'hi';
+    
     return `You are a cultural communication bridge specialist for Indian families. Your role is to help children communicate their feelings to parents in a respectful, clear, and culturally-sensitive way.
 
 Context:
@@ -160,6 +162,7 @@ Context:
 - Child's intent: ${intent}
 - Cultural context: ${culturalContext}
 - Original text: "${userText}"
+- User's language: ${userLanguage}
 
 Your task is to create THREE versions:
 
@@ -173,6 +176,10 @@ Guidelines:
 - Consider cultural values (respect for elders, family harmony)
 - Avoid clinical/therapy language
 - Keep it concise (2-3 sentences each)
+${isHindi ? `- Use natural Hindi/Hinglish slang that Indian youth actually use
+- Mix Hindi and English naturally (Hinglish style)
+- Use respectful Hindi terms for parents (माता-पिता, आप, etc.)
+- Include common Hindi expressions like "मुझे लगता है", "शायद", "बस"` : ''}
 
 Format your response as:
 CHILD VERSION: [text]
@@ -189,14 +196,24 @@ exports.translateToIndianParent = async (req, res) => {
         const { unsafe } = await analyzeSafety(text);
         if (unsafe) return res.status(400).json({ message: 'Content appears unsafe or inappropriate.' });
 
-        // Step 1: Enhanced Emotion and Intent Classification
+        // Step 1: Detect user language
+        let userLanguage = 'en';
+        try {
+            const { translateClient } = require('../config/gcp');
+            const [detection] = await translateClient.detect(text);
+            userLanguage = detection.language;
+        } catch (e) {
+            console.log('Language detection failed, defaulting to English:', e);
+        }
+
+        // Step 2: Enhanced Emotion and Intent Classification
         const { emotion, intent, confidence, sentimentScore, sentimentMagnitude } = await classifyEmotionAndIntent(text);
         
-        // Step 2: Cultural Context Mapping
+        // Step 3: Cultural Context Mapping
         const culturalContext = getCulturalContext(emotion, intent);
         
-        // Step 3: Generate contextual prompt
-        const prompt = buildContextualPrompt(text, emotion, intent, culturalContext);
+        // Step 4: Generate contextual prompt with language awareness
+        const prompt = buildContextualPrompt(text, emotion, intent, culturalContext, userLanguage);
         
         // Step 4: Call Gemini API with fallback
         const genai = await initializeGemini();
@@ -257,6 +274,7 @@ exports.translateToIndianParent = async (req, res) => {
             intent,
             culturalContext,
             originalText: text,
+            detectedLanguage: userLanguage,
             confidence: confidence || 0.5,
             sentimentScore: sentimentScore || 0,
             sentimentMagnitude: sentimentMagnitude || 0,
