@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { translateForIndianParent, detectLanguage } from '../lib/api'
+import { translateForIndianParent, detectLanguage, translateToHindi, translateToEnglish } from '../lib/api'
 import { Textarea } from './ui/textarea'
 import { Button } from './ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
@@ -17,6 +17,9 @@ export default function IndianParentTranslator() {
   const [loading, setLoading] = useState(false)
   const [detectedLanguage, setDetectedLanguage] = useState(null)
   const [showHindiVersion, setShowHindiVersion] = useState(false)
+  const [englishTranslations, setEnglishTranslations] = useState(null)
+  const [hindiTranslations, setHindiTranslations] = useState(null)
+  const [translating, setTranslating] = useState(false)
 
 
   // Auto-detect language when user types
@@ -30,8 +33,56 @@ export default function IndianParentTranslator() {
     }
   }
 
-  // Handle Hindi toggle - now just switches display mode since backend generates both
-  const handleHindiToggle = () => {
+  // Translate to the opposite language
+  const translateToOppositeLanguage = async () => {
+    if (!translation) return
+    
+    setTranslating(true)
+    try {
+      if (detectedLanguage === 'hi') {
+        // If input was Hindi, translate to English
+        const [childResult, parentResult, summaryResult] = await Promise.all([
+          translateToEnglish(translation.childVersion),
+          translateToEnglish(translation.parentVersion),
+          translateToEnglish(translation.neutralSummary)
+        ])
+        
+        setEnglishTranslations({
+          childVersion: childResult.translatedText,
+          parentVersion: parentResult.translatedText,
+          neutralSummary: summaryResult.translatedText
+        })
+      } else {
+        // If input was English, translate to Hindi
+        const [childResult, parentResult, summaryResult] = await Promise.all([
+          translateToHindi(translation.childVersion),
+          translateToHindi(translation.parentVersion),
+          translateToHindi(translation.neutralSummary)
+        ])
+        
+        setHindiTranslations({
+          childVersion: childResult.translatedText,
+          parentVersion: parentResult.translatedText,
+          neutralSummary: summaryResult.translatedText
+        })
+      }
+    } catch (e) {
+      console.log('Translation failed:', e)
+    } finally {
+      setTranslating(false)
+    }
+  }
+
+  // Handle Hindi toggle
+  const handleHindiToggle = async () => {
+    if (!showHindiVersion) {
+      // Switching to opposite language - translate if not already done
+      if (detectedLanguage === 'hi' && !englishTranslations) {
+        await translateToOppositeLanguage()
+      } else if (detectedLanguage === 'en' && !hindiTranslations) {
+        await translateToOppositeLanguage()
+      }
+    }
     setShowHindiVersion(!showHindiVersion)
   }
 
@@ -39,6 +90,8 @@ export default function IndianParentTranslator() {
     setError('')
     setTranslation(null)
     setShowHindiVersion(false)
+    setEnglishTranslations(null)
+    setHindiTranslations(null)
     if (!text.trim()) {
       setError('Please enter some text to translate')
       return
@@ -249,7 +302,10 @@ export default function IndianParentTranslator() {
                             {showHindiVersion ? 'आपकी भावनाओं की स्पष्ट अभिव्यक्ति' : 'Clear Expression of Your Feelings'}
                           </h3>
                           <p className="text-white/90 leading-relaxed">
-                            {translation.childVersion}
+                            {showHindiVersion 
+                              ? (detectedLanguage === 'hi' ? englishTranslations?.childVersion : hindiTranslations?.childVersion) || translation.childVersion
+                              : translation.childVersion
+                            }
                           </p>
                         </CardContent>
                       </Card>
@@ -262,7 +318,10 @@ export default function IndianParentTranslator() {
                             {showHindiVersion ? 'माता-पिता के लिए सम्मानजनक संचार' : 'Respectful Communication for Parents'}
                           </h3>
                           <p className="text-white/90 leading-relaxed">
-                            {translation.parentVersion}
+                            {showHindiVersion 
+                              ? (detectedLanguage === 'hi' ? englishTranslations?.parentVersion : hindiTranslations?.parentVersion) || translation.parentVersion
+                              : translation.parentVersion
+                            }
                           </p>
                         </CardContent>
                       </Card>
@@ -275,24 +334,45 @@ export default function IndianParentTranslator() {
                             {showHindiVersion ? 'दोनों के लिए वस्तुनिष्ठ समझ' : 'Objective Understanding for Both'}
                           </h3>
                           <p className="text-[#5B3B89] leading-relaxed">
-                            {translation.neutralSummary}
+                            {showHindiVersion 
+                              ? (detectedLanguage === 'hi' ? englishTranslations?.neutralSummary : hindiTranslations?.neutralSummary) || translation.neutralSummary
+                              : translation.neutralSummary
+                            }
                           </p>
                         </CardContent>
                       </Card>
                     </TabsContent>
                   </Tabs>
 
-                  {/* Language Info */}
-                  {detectedLanguage === 'hi' && (
-                    <div className="flex items-center justify-center gap-3 pt-4">
-                      <div className="flex items-center gap-2">
-                        <Languages className="h-4 w-4 text-[#5B3B89]" />
-                        <span className="text-sm text-[#5B3B89]">
-                          Generated in Hindi/Hinglish slang for better family communication
-                        </span>
-                      </div>
+                  {/* Language Toggle */}
+                  <div className="flex items-center justify-center gap-3 pt-4">
+                    <div className="flex items-center gap-2">
+                      <Languages className="h-4 w-4 text-[#5B3B89]" />
+                      <span className="text-sm text-[#5B3B89]">
+                        {detectedLanguage === 'hi' ? 'Show English version:' : 'Show Hindi version:'}
+                      </span>
                     </div>
-                  )}
+                    <button
+                      onClick={handleHindiToggle}
+                      disabled={translating}
+                      className={`px-3 py-1 text-xs rounded-full transition-colors ${
+                        showHindiVersion 
+                          ? 'bg-[#5B3B89] text-white' 
+                          : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                      } ${translating ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {translating ? (
+                        <div className="flex items-center gap-1">
+                          <Sparkles className="h-3 w-3 animate-spin" />
+                          <span>Translating...</span>
+                        </div>
+                      ) : (
+                        showHindiVersion 
+                          ? (detectedLanguage === 'hi' ? 'English' : 'हिंदी')
+                          : (detectedLanguage === 'hi' ? 'हिंदी' : 'English')
+                      )}
+                    </button>
+                  </div>
 
                   {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row gap-3 pt-4">
@@ -300,7 +380,10 @@ export default function IndianParentTranslator() {
                       variant="outline" 
                       className="border-[#3A8D8E] text-[#3A8D8E] hover:bg-[#3A8D8E]/10"
                       onClick={() => {
-                        navigator.clipboard.writeText(translation.parentVersion);
+                        const textToCopy = showHindiVersion 
+                          ? (detectedLanguage === 'hi' ? englishTranslations?.parentVersion : hindiTranslations?.parentVersion) || translation.parentVersion
+                          : translation.parentVersion;
+                        navigator.clipboard.writeText(textToCopy);
                       }}
                     >
                       Copy Parent Version
@@ -309,7 +392,10 @@ export default function IndianParentTranslator() {
                       variant="outline" 
                       className="border-[#5B3B89] text-[#5B3B89] hover:bg-[#5B3B89]/10"
                       onClick={() => {
-                        navigator.clipboard.writeText(translation.childVersion);
+                        const textToCopy = showHindiVersion 
+                          ? (detectedLanguage === 'hi' ? englishTranslations?.childVersion : hindiTranslations?.childVersion) || translation.childVersion
+                          : translation.childVersion;
+                        navigator.clipboard.writeText(textToCopy);
                       }}
                     >
                       Copy Your Version
@@ -318,7 +404,16 @@ export default function IndianParentTranslator() {
                       variant="outline" 
                       className="border-[#E4A548] text-[#E4A548] hover:bg-[#E4A548]/10"
                       onClick={() => {
-                        const fullText = `Child: ${translation.childVersion}\n\nParent: ${translation.parentVersion}\n\nSummary: ${translation.neutralSummary}`;
+                        const childText = showHindiVersion 
+                          ? (detectedLanguage === 'hi' ? englishTranslations?.childVersion : hindiTranslations?.childVersion) || translation.childVersion
+                          : translation.childVersion;
+                        const parentText = showHindiVersion 
+                          ? (detectedLanguage === 'hi' ? englishTranslations?.parentVersion : hindiTranslations?.parentVersion) || translation.parentVersion
+                          : translation.parentVersion;
+                        const summaryText = showHindiVersion 
+                          ? (detectedLanguage === 'hi' ? englishTranslations?.neutralSummary : hindiTranslations?.neutralSummary) || translation.neutralSummary
+                          : translation.neutralSummary;
+                        const fullText = `Child: ${childText}\n\nParent: ${parentText}\n\nSummary: ${summaryText}`;
                         navigator.clipboard.writeText(fullText);
                       }}
                     >
