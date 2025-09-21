@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { translateForIndianParent } from '../lib/api'
+import { translateForIndianParent, detectLanguage, translateToHindi, translateToEnglish } from '../lib/api'
 import { Textarea } from './ui/textarea'
 import { Button } from './ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
 import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
-import { MessageCircle, Users, FileText, Brain, Sparkles } from 'lucide-react'
+import { MessageCircle, Users, FileText, Brain, Sparkles, Languages, RotateCcw } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function IndianParentTranslator() {
@@ -15,7 +15,20 @@ export default function IndianParentTranslator() {
   const [translation, setTranslation] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [detectedLanguage, setDetectedLanguage] = useState(null)
+  const [showHindiVersion, setShowHindiVersion] = useState(false)
 
+
+  // Auto-detect language when user types
+  const detectUserLanguage = async (inputText) => {
+    if (inputText.length < 3) return
+    try {
+      const result = await detectLanguage(inputText)
+      setDetectedLanguage(result.language)
+    } catch (e) {
+      console.log('Language detection failed:', e)
+    }
+  }
 
   const onTranslate = async () => {
     setError('')
@@ -26,6 +39,9 @@ export default function IndianParentTranslator() {
     }
     setLoading(true)
     try {
+      // Auto-detect language first
+      await detectUserLanguage(text.trim())
+      
       const res = await translateForIndianParent(text.trim())
       
       if (res && (res.childVersion || res.parentVersion || res.neutralSummary)) {
@@ -72,10 +88,21 @@ export default function IndianParentTranslator() {
           <CardTitle className="lotus-gradient-text flex items-center gap-2">
             <Brain className="h-6 w-6" />
             Contextual Parent-Kid Communication Bridge
+            <div className="flex items-center gap-1 text-xs text-[#3A8D8E] bg-white/50 px-2 py-1 rounded-full ml-2">
+              <Languages className="h-3 w-3" />
+              <span>हिंदी Support</span>
+            </div>
           </CardTitle>
           <p className="text-sm text-[#5B3B89] mt-2">
-            Transform your feelings into clear, culturally-sensitive communication that bridges the gap between you and your parents.
+            Transform your feelings into clear, culturally-sensitive communication that bridges the gap between you and your parents. 
+            Supports both English and Hindi (हिंदी) for better family communication.
           </p>
+          {detectedLanguage && (
+            <div className="flex items-center gap-2 text-xs text-[#3A8D8E] mt-2">
+              <RotateCcw className="h-3 w-3" />
+              <span>Language detected: {detectedLanguage === 'hi' ? 'हिंदी' : 'English'}</span>
+            </div>
+          )}
         </CardHeader>
         <CardContent className="space-y-6">
           {!user ? (
@@ -106,8 +133,17 @@ export default function IndianParentTranslator() {
                   </label>
                   <Textarea
                     value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    placeholder="Example: 'I'm feeling overwhelmed with school work and I need your support, but I don't know how to ask for it...'"
+                    onChange={(e) => {
+                      setText(e.target.value)
+                      // Auto-detect language as user types
+                      if (e.target.value.length > 3) {
+                        detectUserLanguage(e.target.value)
+                      }
+                    }}
+                    placeholder={detectedLanguage === 'hi' 
+                      ? "उदाहरण: 'मैं अपनी पढ़ाई से बहुत परेशान हूँ और मुझे आपका सहारा चाहिए, लेकिन मुझे नहीं पता कि कैसे कहूं...'"
+                      : "Example: 'I'm feeling overwhelmed with school work and I need your support, but I don't know how to ask for it...'"
+                    }
                     className="min-h-32 border-[#3A8D8E]/20 focus:border-[#3A8D8E] focus:ring-[#3A8D8E]"
                   />
                 </div>
@@ -223,6 +259,24 @@ export default function IndianParentTranslator() {
                       </Card>
                     </TabsContent>
                   </Tabs>
+
+                  {/* Hindi Toggle */}
+                  <div className="flex items-center justify-center gap-3 pt-4">
+                    <div className="flex items-center gap-2">
+                      <Languages className="h-4 w-4 text-[#5B3B89]" />
+                      <span className="text-sm text-[#5B3B89]">Show Hindi versions:</span>
+                    </div>
+                    <button
+                      onClick={() => setShowHindiVersion(!showHindiVersion)}
+                      className={`px-3 py-1 text-xs rounded-full transition-colors ${
+                        showHindiVersion 
+                          ? 'bg-[#5B3B89] text-white' 
+                          : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                      }`}
+                    >
+                      {showHindiVersion ? 'हिंदी' : 'English'}
+                    </button>
+                  </div>
 
                   {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row gap-3 pt-4">

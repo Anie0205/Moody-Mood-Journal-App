@@ -50,7 +50,7 @@ export default function VentSpace() {
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
       <Card className="card-lotus">
         <CardHeader>
-                      <CardTitle className="lotus-gradient-text">Vent Space</CardTitle>
+          <CardTitle className="lotus-gradient-text">Vent Space</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {!user ? (
