@@ -1,34 +1,68 @@
 import { useState } from 'react'
 import { translateForIndianParent } from '../lib/api'
-import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from './ui/textarea'
+import { Button } from './ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
 import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
 import { MessageCircle, Users, FileText, Brain, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function IndianParentTranslator() {
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const [text, setText] = useState('')
   const [translation, setTranslation] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+
   const onTranslate = async () => {
     setError('')
     setTranslation(null)
-    if (!text.trim()) return
+    if (!text.trim()) {
+      setError('Please enter some text to translate')
+      return
+    }
     setLoading(true)
     try {
       const res = await translateForIndianParent(text.trim())
-      setTranslation(res)
+      
+      if (res && (res.childVersion || res.parentVersion || res.neutralSummary)) {
+        setTranslation(res)
+        setError('')
+      } else {
+        setError('Invalid response from server. Please try again.')
+      }
     } catch (e) {
-      setError(e.message || 'Failed to translate')
+      if (e.message.includes('401') || e.message.includes('Unauthorized')) {
+        setError('Authentication failed. Please log in again.')
+      } else if (e.message.includes('500') || e.message.includes('Internal Server Error')) {
+        setError('Server error. The translation service may be temporarily unavailable.')
+      } else if (e.message.includes('Network') || e.message.includes('fetch')) {
+        setError('Network error. Please check your connection and try again.')
+      } else {
+        setError(e.message || 'Failed to translate. Please try again.')
+      }
     } finally {
       setLoading(false)
     }
+  }
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <Card className="card-lotus">
+          <CardContent className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <Sparkles className="h-8 w-8 animate-spin text-[#5B3B89] mx-auto mb-4" />
+              <p className="text-[#5B3B89]">Loading translator...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -45,11 +79,22 @@ export default function IndianParentTranslator() {
         </CardHeader>
         <CardContent className="space-y-6">
           {!user ? (
-            <div className="text-center py-8">
-              <p className="text-[#5B3B89] mb-4">Please log in to access the Parent Communication Bridge</p>
-              <Link to="/login">
-                <Button className="button-lotus">Login</Button>
-              </Link>
+            <div className="text-center py-12">
+              <div className="mb-6">
+                <Brain className="h-16 w-16 text-[#5B3B89] mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-[#1E1E2F] mb-2">Authentication Required</h3>
+                <p className="text-[#5B3B89] mb-6">Please log in to access the Parent Communication Bridge</p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link to="/login">
+                  <Button className="button-lotus">Login</Button>
+                </Link>
+                <Link to="/register">
+                  <Button variant="outline" className="border-[#3A8D8E] text-[#3A8D8E] hover:bg-[#3A8D8E]/10">
+                    Create Account
+                  </Button>
+                </Link>
+              </div>
             </div>
           ) : (
             <>
@@ -66,6 +111,7 @@ export default function IndianParentTranslator() {
                     className="min-h-32 border-[#3A8D8E]/20 focus:border-[#3A8D8E] focus:ring-[#3A8D8E]"
                   />
                 </div>
+
                 
                 <Button 
                   onClick={onTranslate} 
@@ -89,6 +135,13 @@ export default function IndianParentTranslator() {
               {error && (
                 <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">
                   {error}
+                </div>
+              )}
+
+              {loading && (
+                <div className="text-sm text-blue-600 bg-blue-50 p-3 rounded-lg border border-blue-200 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 animate-spin" />
+                  Processing your message...
                 </div>
               )}
 

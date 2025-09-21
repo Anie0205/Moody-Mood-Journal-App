@@ -25,8 +25,19 @@ export default function AnonymousChat() {
       console.log('Sending message:', { text, conversationHistory })
       const res = await sendAnonymousMessage(text, conversationHistory)
       console.log('Response received:', res)
-      const reply = res.reply || ''
-      setMessages(prev => [...prev, { role: 'ai', text: reply }])
+      
+      // Handle crisis response
+      if (res.crisis) {
+        setMessages(prev => [...prev, { 
+          role: 'crisis', 
+          text: res.message,
+          emergencyResources: res.emergencyResources,
+          aiResponse: res.aiResponse
+        }])
+      } else {
+        const reply = res.reply || ''
+        setMessages(prev => [...prev, { role: 'ai', text: reply }])
+      }
     } catch (e) {
       console.error('Error details:', e)
       setError(e.message || 'Failed to send')
@@ -48,6 +59,12 @@ export default function AnonymousChat() {
           <CardTitle className="lotus-gradient-text flex items-center gap-2">
             <MessageCircle className="h-5 w-5" /> Anonymous, Judgment-Free Conversation
           </CardTitle>
+          <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg mt-3">
+            <p className="text-blue-800 text-sm">
+              <strong>Important:</strong> This is a reflective journaling aid, not therapy or medical advice. 
+              If you're having thoughts of self-harm, please reach out to a trusted adult or call a helpline immediately.
+            </p>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="h-[480px] bg-white/70 rounded-2xl border border-[#3A8D8E]/20 overflow-hidden">
@@ -59,9 +76,66 @@ export default function AnonymousChat() {
               )}
               {messages.map((m, idx) => (
                 <div key={idx} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`${m.role === 'user' ? 'bg-gradient-to-br from-[#5B3B89] to-[#3A8D8E] text-white' : 'bg-gradient-to-br from-[#F2E7DA] to-[#ECE7E1] text-[#1E1E2F]'} max-w-[75%] px-4 py-2 rounded-2xl shadow-sm ${m.role === 'user' ? 'rounded-br-md' : 'rounded-bl-md'}`}>
-                    {m.text}
-                  </div>
+                  {m.role === 'crisis' ? (
+                    <div className="max-w-[90%] w-full">
+                      <div className="bg-gradient-to-br from-red-50 to-orange-50 border-2 border-red-200 p-4 rounded-2xl shadow-sm">
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                          <span className="font-semibold text-red-700">Safety Alert</span>
+                        </div>
+                        <p className="text-red-800 mb-4">{m.text}</p>
+                        
+                        {m.emergencyResources && (
+                          <div className="space-y-3">
+                            <div className="bg-white p-3 rounded-lg border border-red-200">
+                              <h4 className="font-semibold text-red-700 mb-2">Emergency Helplines (24/7):</h4>
+                              <div className="space-y-2">
+                                {m.emergencyResources.helplines.map((helpline, idx) => (
+                                  <div key={idx} className="flex justify-between items-center">
+                                    <div>
+                                      <span className="font-medium text-gray-800">{helpline.name}</span>
+                                      <p className="text-sm text-gray-600">{helpline.description}</p>
+                                    </div>
+                                    <a 
+                                      href={`tel:${helpline.number}`}
+                                      className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
+                                    >
+                                      Call {helpline.number}
+                                    </a>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                            
+                            <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+                              <p className="text-yellow-800 text-sm">
+                                <strong>Emergency:</strong> {m.emergencyResources.emergency}
+                              </p>
+                            </div>
+                            
+                            {m.emergencyResources.onlineResources && (
+                              <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg">
+                                <h5 className="font-semibold text-blue-700 mb-2">Additional Resources:</h5>
+                                <ul className="text-blue-800 text-sm space-y-1">
+                                  {m.emergencyResources.onlineResources.map((resource, idx) => (
+                                    <li key={idx}>• {resource}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        
+                        <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                          <p className="text-gray-700 text-sm italic">{m.aiResponse}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className={`${m.role === 'user' ? 'bg-gradient-to-br from-[#5B3B89] to-[#3A8D8E] text-white' : 'bg-gradient-to-br from-[#F2E7DA] to-[#ECE7E1] text-[#1E1E2F]'} max-w-[75%] px-4 py-2 rounded-2xl shadow-sm ${m.role === 'user' ? 'rounded-br-md' : 'rounded-bl-md'}`}>
+                      {m.text}
+                    </div>
+                  )}
                 </div>
               ))}
               {loading && (

@@ -65,4 +65,17 @@ export const listVentEntries = () =>
 export const translateForIndianParent = (text) =>
   apiPost('/api/translate/indian-parent', { text });
 
+// Language support functions
+export const detectLanguage = (text) =>
+  apiPost('/api/language/detect', { text });
+
+export const translateToHindi = (text) =>
+  apiPost('/api/language/translate/hindi', { text });
+
+export const translateToEnglish = (text) =>
+  apiPost('/api/language/translate/english', { text });
+
+export const getBilingualPrompts = () =>
+  apiGet('/api/language/prompts');
+
 

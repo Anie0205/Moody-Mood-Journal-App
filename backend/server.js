@@ -1,7 +1,10 @@
     const express = require("express");
     const mongoose = require("mongoose");
     const cors = require("cors");
+    const helmet = require("helmet");
+    const rateLimit = require("express-rate-limit");
     const connectDB = require("./config/db");
+    const { sanitizeInput, detectSensitiveData, sanitizeData, privacyCompliance } = require("./middleware/dataSanitization");
     require("dotenv").config();
     
     // Debug: Check if .env is loaded
@@ -16,6 +19,9 @@
     const chatRoutes = require("./routes/chat");
     const ventRoutes = require("./routes/vent");
     const translatorRoutes = require("./routes/translator");
+    const languageRoutes = require("./routes/language");
+    const analyticsRoutes = require("./routes/analytics");
+    const privacyRoutes = require("./routes/privacy");
 
     const app = express();
     
@@ -31,15 +37,44 @@
     };
     
     app.use(cors(corsOptions));
-    app.use(express.json());
     
-    // Security headers
-    app.use((req, res, next) => {
-        res.header('X-Content-Type-Options', 'nosniff');
-        res.header('X-Frame-Options', 'DENY');
-        res.header('X-XSS-Protection', '1; mode=block');
-        next();
+    // Security middleware
+    app.use(helmet({
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                styleSrc: ["'self'", "'unsafe-inline'"],
+                scriptSrc: ["'self'"],
+                imgSrc: ["'self'", "data:", "https:"],
+            },
+        },
+    }));
+    
+    // Rate limiting
+    const limiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // limit each IP to 100 requests per windowMs
+        message: 'Too many requests from this IP, please try again later.',
+        standardHeaders: true,
+        legacyHeaders: false,
     });
+    app.use(limiter);
+    
+    // Stricter rate limiting for AI endpoints
+    const aiLimiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 20, // limit each IP to 20 AI requests per windowMs
+        message: 'AI rate limit exceeded, please try again later.',
+    });
+    
+    app.use(express.json({ limit: '10mb' }));
+    app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+    
+    // Privacy compliance
+    app.use(privacyCompliance);
+    
+    // Data sanitization
+    app.use(sanitizeData);
 
     connectDB();
     
@@ -61,6 +96,9 @@
     app.use("/api/chat", chatRoutes);
     app.use("/api/vent", ventRoutes);
     app.use("/api/translate", translatorRoutes);
+    app.use("/api/language", languageRoutes);
+    app.use("/api/analytics", analyticsRoutes);
+    app.use("/api/privacy", privacyRoutes);
 
     // Error handling middleware
     app.use((err, req, res, next) => {

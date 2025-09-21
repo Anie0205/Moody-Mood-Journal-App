@@ -1,5 +1,7 @@
 const {LanguageServiceClient} = require('@google-cloud/language');
 const {GoogleGenerativeAI} = require('@google/generative-ai');
+const {Translate} = require('@google-cloud/translate').v2;
+const {DlpServiceClient} = require('@google-cloud/dlp');
 const fs = require('fs');
 const path = require('path');
 
@@ -30,9 +32,13 @@ async function initializeGemini() {
 }
 
 const languageClient = new LanguageServiceClient();
+const translateClient = new Translate();
+const dlpClient = new DlpServiceClient();
 
 module.exports = {
     languageClient,
+    translateClient,
+    dlpClient,
     initializeGemini,
 };
 

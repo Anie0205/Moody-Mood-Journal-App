@@ -1,15 +1,103 @@
 const { initializeGemini } = require('../config/gcp');
 const { analyzeSafety } = require('../middleware/safety');
+const { languageClient } = require('../config/gcp');
+const { handleAIError, generateFallbackResponse } = require('../middleware/fallbackHandler');
 
-// Emotion classification function (simplified version - can be replaced with ML model later)
-function classifyEmotionAndIntent(text) {
+// Enhanced emotion classification using Google Cloud NLP
+async function classifyEmotionAndIntent(text) {
+    try {
+        // Use Google Cloud Natural Language API for sentiment and entity analysis
+        const [sentimentResult] = await languageClient.analyzeSentiment({
+            document: { content: text, type: 'PLAIN_TEXT' },
+            encodingType: 'UTF8',
+        });
+        
+        const [entityResult] = await languageClient.analyzeEntities({
+            document: { content: text, type: 'PLAIN_TEXT' },
+            encodingType: 'UTF8',
+        });
+        
+        const sentimentScore = sentimentResult.documentSentiment?.score ?? 0;
+        const sentimentMagnitude = sentimentResult.documentSentiment?.magnitude ?? 0;
+        
+        // Enhanced emotion classification based on sentiment analysis
+        let emotion = 'neutral';
+        let confidence = 0.5;
+        
+        if (sentimentScore < -0.6) {
+            if (sentimentMagnitude > 0.8) {
+                emotion = 'sadness/depression';
+                confidence = Math.min(0.9, Math.abs(sentimentScore) + sentimentMagnitude * 0.3);
+            } else {
+                emotion = 'frustration/anger';
+                confidence = Math.min(0.8, Math.abs(sentimentScore) + sentimentMagnitude * 0.2);
+            }
+        } else if (sentimentScore < -0.2) {
+            emotion = 'anxiety/worry';
+            confidence = Math.min(0.7, Math.abs(sentimentScore) + sentimentMagnitude * 0.2);
+        } else if (sentimentScore > 0.6) {
+            emotion = 'happiness/excitement';
+            confidence = Math.min(0.9, sentimentScore + sentimentMagnitude * 0.3);
+        } else if (sentimentScore > 0.2) {
+            emotion = 'contentment';
+            confidence = Math.min(0.7, sentimentScore + sentimentMagnitude * 0.2);
+        }
+        
+        // Intent detection based on entities and keywords
+        let intent = 'informational';
+        const entities = entityResult.entities || [];
+        const lowerText = text.toLowerCase();
+        
+        // Academic context detection
+        const academicKeywords = ['study', 'exam', 'school', 'college', 'university', 'academic', 'grade', 'marks', 'result'];
+        const academicEntities = entities.filter(e => 
+            e.type === 'ORGANIZATION' && 
+            (e.name.toLowerCase().includes('school') || e.name.toLowerCase().includes('college') || e.name.toLowerCase().includes('university'))
+        );
+        
+        if (academicKeywords.some(keyword => lowerText.includes(keyword)) || academicEntities.length > 0) {
+            intent = 'academic_concern';
+        }
+        // Family/parent context detection
+        else if (lowerText.includes('parent') || lowerText.includes('family') || lowerText.includes('mother') || lowerText.includes('father')) {
+            intent = 'family_concern';
+        }
+        // Social context detection
+        else if (lowerText.includes('friend') || lowerText.includes('social') || lowerText.includes('relationship') || lowerText.includes('peer')) {
+            intent = 'social_concern';
+        }
+        // Career context detection
+        else if (lowerText.includes('career') || lowerText.includes('job') || lowerText.includes('future') || lowerText.includes('career')) {
+            intent = 'career_concern';
+        }
+        // Support seeking detection
+        else if (lowerText.includes('help') || lowerText.includes('support') || lowerText.includes('advice') || lowerText.includes('guidance')) {
+            intent = 'seeking_support';
+        }
+        
+        return { 
+            emotion, 
+            intent, 
+            confidence,
+            sentimentScore,
+            sentimentMagnitude
+        };
+        
+    } catch (error) {
+        console.error('Emotion classification error:', error);
+        // Fallback to simple keyword-based classification
+        return fallbackEmotionClassification(text);
+    }
+}
+
+// Fallback emotion classification using keywords
+function fallbackEmotionClassification(text) {
     const lowerText = text.toLowerCase();
     
-    // Simple keyword-based classification (replace with ML model)
     let emotion = 'neutral';
     let intent = 'informational';
     
-    // Emotion detection
+    // Basic emotion detection
     if (lowerText.includes('angry') || lowerText.includes('frustrated') || lowerText.includes('hate')) {
         emotion = 'frustration/anger';
     } else if (lowerText.includes('sad') || lowerText.includes('depressed') || lowerText.includes('hopeless')) {
@@ -22,7 +110,7 @@ function classifyEmotionAndIntent(text) {
         emotion = 'happiness/excitement';
     }
     
-    // Intent detection
+    // Basic intent detection
     if (lowerText.includes('understand') || lowerText.includes('help') || lowerText.includes('support')) {
         intent = 'seeking_support';
     } else if (lowerText.includes('pressure') || lowerText.includes('expectations') || lowerText.includes('demands')) {
@@ -33,7 +121,7 @@ function classifyEmotionAndIntent(text) {
         intent = 'social_concern';
     }
     
-    return { emotion, intent };
+    return { emotion, intent, confidence: 0.3 };
 }
 
 // Cultural context mapping for Indian parent-teen communication
@@ -94,15 +182,15 @@ NEUTRAL SUMMARY: [text]`;
 
 exports.translateToIndianParent = async (req, res) => {
     try {
-        const { text, moodEntry, metadata = {} } = req.body;
+        const { text } = req.body;
         if (!text) return res.status(400).json({ message: 'text is required' });
 
         // Safety check input
         const { unsafe } = await analyzeSafety(text);
         if (unsafe) return res.status(400).json({ message: 'Content appears unsafe or inappropriate.' });
 
-        // Step 1: Emotion and Intent Classification
-        const { emotion, intent } = classifyEmotionAndIntent(text);
+        // Step 1: Enhanced Emotion and Intent Classification
+        const { emotion, intent, confidence, sentimentScore, sentimentMagnitude } = await classifyEmotionAndIntent(text);
         
         // Step 2: Cultural Context Mapping
         const culturalContext = getCulturalContext(emotion, intent);
@@ -110,9 +198,24 @@ exports.translateToIndianParent = async (req, res) => {
         // Step 3: Generate contextual prompt
         const prompt = buildContextualPrompt(text, emotion, intent, culturalContext);
         
-        // Step 4: Call Gemini API
+        // Step 4: Call Gemini API with fallback
         const genai = await initializeGemini();
-        if (!genai) return res.status(500).json({ message: 'AI not configured' });
+        if (!genai) {
+            // Use fallback when AI is not configured
+            const fallbackResponse = {
+                childVersion: text,
+                parentVersion: 'I want to share my feelings with you in a respectful way, but I need help finding the right words.',
+                neutralSummary: 'The child is expressing their feelings and seeking understanding.',
+                emotion,
+                intent,
+                culturalContext,
+                originalText: text,
+                confidence: 0.3,
+                fallback: true,
+                disclaimer: 'This is a basic response. For professional support, please contact a mental health professional.'
+            };
+            return res.status(200).json(fallbackResponse);
+        }
         
         const model = genai.getGenerativeModel({ model: 'gemini-1.5-flash' });
         const result = await model.generateContent(prompt);
@@ -145,17 +248,22 @@ exports.translateToIndianParent = async (req, res) => {
             });
         }
         
-        // Step 7: Return structured response
-        return res.status(200).json({
+        // Final response with enhanced metadata
+        const output = {
             childVersion: childVersion || text,
             parentVersion: parentVersion || 'I want to share my feelings with you in a respectful way.',
             neutralSummary: neutralSummary || 'The child is expressing their feelings and seeking understanding.',
             emotion,
             intent,
             culturalContext,
-            originalText: text
-        });
-        
+            originalText: text,
+            confidence: confidence || 0.5,
+            sentimentScore: sentimentScore || 0,
+            sentimentMagnitude: sentimentMagnitude || 0,
+            disclaimer: 'This is a communication aid, not professional therapy. For serious mental health concerns, please consult a qualified professional.'
+        };
+
+        return res.status(200).json(output);
     } catch (err) {
         console.error('translateToIndianParent error', err);
         return res.status(500).json({ message: 'Failed to generate translation' });
