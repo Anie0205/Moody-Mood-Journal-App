@@ -1,1 +1,0 @@
-$env:PATH += ";C:\Users\anany\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin"
