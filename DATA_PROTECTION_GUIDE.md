@@ -240,7 +240,7 @@ res.setHeader('X-Privacy-Policy', 'https://moody.app/privacy');
 
 ## **📞 Privacy Contact**
 
-- **Email**: privacy@moody.app
+- **Email**: vananya0410@gmail.com
 - **Response Time**: 30 days for privacy requests
 - **Data Protection Officer**: Available for complex requests
 - **Regular Updates**: Privacy policy updated quarterly
