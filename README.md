@@ -153,9 +153,9 @@
 
 **24/7 Helplines:**
 - KIRAN Mental Health: 1800-599-0019
-- AASRA Suicide Prevention: 91-22-27546669
-- Vandrevala Foundation: 1860-2662-345
-- Snehi: 91-11-65978181
+- AASRA Suicide Prevention: +91-22-27546669
+- Vandrevala Foundation: +91-9999-666-555
+- Snehi: +91-9582208181
 
 **Emergency Services:**
 - Police: 100
