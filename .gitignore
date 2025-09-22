@@ -20,6 +20,8 @@ backend/.env
 *.crt
 *.cer
 *.json
+!package.json
+!firebase.json
 
 # OS/IDE
 .DS_Store
