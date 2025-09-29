@@ -57,7 +57,7 @@ const Home = () => {
                 <h1 className="text-4xl lg:text-6xl font-bold text-[#1E1E2F] leading-tight">
                   Your Personality is{' '}
                   <span className="lotus-gradient-text">
-                    What Makes You
+                    What Makes Your
                   </span>{' '}
                   Character
                 </h1>
